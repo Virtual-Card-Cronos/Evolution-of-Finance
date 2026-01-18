@@ -35,20 +35,25 @@ export async function PATCH(
     }
 
     if (isDatabaseConfigured && db) {
-      const updated = await db
-        .update(cartItems)
-        .set({ quantity, updatedAt: new Date() })
-        .where(eq(cartItems.id, id))
-        .returning();
+      try {
+        const updated = await db
+          .update(cartItems)
+          .set({ quantity, updatedAt: new Date() })
+          .where(eq(cartItems.id, id))
+          .returning();
 
-      if (updated.length === 0) {
-        return NextResponse.json(
-          { error: "Item not found", success: false },
-          { status: 404 }
-        );
+        if (updated.length === 0) {
+          return NextResponse.json(
+            { error: "Item not found", success: false },
+            { status: 404 }
+          );
+        }
+
+        return NextResponse.json({ item: updated[0], success: true });
+      } catch (dbError) {
+        console.warn("Database error, falling back to in-memory storage:", dbError);
+        // Fall through to in-memory storage
       }
-
-      return NextResponse.json({ item: updated[0], success: true });
     }
 
     // Fallback to in-memory storage
@@ -89,19 +94,24 @@ export async function DELETE(
     const id = parseInt(params.id);
 
     if (isDatabaseConfigured && db) {
-      const deleted = await db
-        .delete(cartItems)
-        .where(eq(cartItems.id, id))
-        .returning();
+      try {
+        const deleted = await db
+          .delete(cartItems)
+          .where(eq(cartItems.id, id))
+          .returning();
 
-      if (deleted.length === 0) {
-        return NextResponse.json(
-          { error: "Item not found", success: false },
-          { status: 404 }
-        );
+        if (deleted.length === 0) {
+          return NextResponse.json(
+            { error: "Item not found", success: false },
+            { status: 404 }
+          );
+        }
+
+        return NextResponse.json({ success: true });
+      } catch (dbError) {
+        console.warn("Database error, falling back to in-memory storage:", dbError);
+        // Fall through to in-memory storage
       }
-
-      return NextResponse.json({ success: true });
     }
 
     // Fallback to in-memory storage
