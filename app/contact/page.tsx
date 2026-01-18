@@ -1,7 +1,18 @@
+"use client";
+
+import { useState, FormEvent } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export default function ContactPage() {
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // In a production environment, this would send the form data to a backend service
+    setIsSubmitted(true);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950 transition-colors">
       <Header />
@@ -26,70 +37,92 @@ export default function ContactPage() {
                 <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">
                   Send Us a Message
                 </h2>
-                <form className="space-y-4">
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                {isSubmitted ? (
+                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 text-center">
+                    <span className="text-4xl mb-4 block">✅</span>
+                    <h3 className="text-lg font-semibold text-green-800 dark:text-green-200 mb-2">
+                      Message Sent!
+                    </h3>
+                    <p className="text-green-700 dark:text-green-300">
+                      Thank you for contacting us. We&apos;ll get back to you within 24 hours.
+                    </p>
+                    <button
+                      onClick={() => setIsSubmitted(false)}
+                      className="mt-4 text-purple-600 dark:text-purple-400 hover:underline"
                     >
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      placeholder="Your name"
-                    />
+                      Send another message
+                    </button>
                   </div>
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                ) : (
+                  <form className="space-y-4" onSubmit={handleSubmit}>
+                    <div>
+                      <label
+                        htmlFor="name"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      >
+                        Name
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        required
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        placeholder="Your name"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      >
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        required
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        placeholder="your@email.com"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="subject"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      >
+                        Subject
+                      </label>
+                      <input
+                        type="text"
+                        id="subject"
+                        required
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        placeholder="How can we help?"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="message"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      >
+                        Message
+                      </label>
+                      <textarea
+                        id="message"
+                        rows={5}
+                        required
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        placeholder="Tell us more about your inquiry..."
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-full bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600 text-white py-3 rounded-lg font-semibold transition-colors"
                     >
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      placeholder="your@email.com"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="subject"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                    >
-                      Subject
-                    </label>
-                    <input
-                      type="text"
-                      id="subject"
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      placeholder="How can we help?"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="message"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                    >
-                      Message
-                    </label>
-                    <textarea
-                      id="message"
-                      rows={5}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      placeholder="Tell us more about your inquiry..."
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-full bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600 text-white py-3 rounded-lg font-semibold transition-colors"
-                  >
-                    Send Message
-                  </button>
-                </form>
+                      Send Message
+                    </button>
+                  </form>
+                )}
               </div>
 
               {/* Contact Information */}

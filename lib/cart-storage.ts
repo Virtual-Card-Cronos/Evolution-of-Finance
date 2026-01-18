@@ -1,9 +1,11 @@
 import { CartItem } from "@/lib/db/schema";
 
 // Shared in-memory cart storage for fallback when database is not configured
-// Note: In production, this should be a proper session/cache store
+// NOTE: This is intended for development/demo purposes only.
+// In production, always use a proper database with DATABASE_URL configured.
+// This in-memory storage is NOT suitable for multi-user production environments.
 let inMemoryCart: CartItem[] = [];
-let nextId = 1;
+let nextId = Date.now(); // Use timestamp as starting ID for uniqueness
 
 export function getInMemoryCart(): CartItem[] {
   return inMemoryCart;
