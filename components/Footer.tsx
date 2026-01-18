@@ -2,13 +2,13 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white mt-auto">
+    <footer className="bg-gray-900 dark:bg-gray-950 text-white mt-auto transition-colors">
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
             <h3 className="text-xl font-bold mb-4">VirtualCards</h3>
-            <p className="text-gray-400">
+            <p className="text-gray-400 dark:text-gray-500">
               Your trusted platform for instant digital gift cards from top brands worldwide.
             </p>
           </div>
@@ -18,17 +18,17 @@ export default function Footer() {
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/cards" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/cards" className="text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-300 transition-colors">
                   Browse Cards
                 </Link>
               </li>
               <li>
-                <Link href="/how-it-works" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/how-it-works" className="text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-300 transition-colors">
                   How It Works
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/about" className="text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-300 transition-colors">
                   About Us
                 </Link>
               </li>
@@ -40,17 +40,17 @@ export default function Footer() {
             <h4 className="text-lg font-semibold mb-4">Support</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/faq" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/faq" className="text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-300 transition-colors">
                   FAQ
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/contact" className="text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-300 transition-colors">
                   Contact Us
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/terms" className="text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-300 transition-colors">
                   Terms of Service
                 </Link>
               </li>
@@ -60,18 +60,18 @@ export default function Footer() {
           {/* Newsletter */}
           <div>
             <h4 className="text-lg font-semibold mb-4">Stay Updated</h4>
-            <p className="text-gray-400 mb-4">
+            <p className="text-gray-400 dark:text-gray-500 mb-4">
               Subscribe to get special offers and updates.
             </p>
             <input
               type="email"
               placeholder="Enter your email"
-              className="w-full px-4 py-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-purple-500"
+              className="w-full px-4 py-2 rounded bg-gray-800 dark:bg-gray-900 text-white border border-gray-700 dark:border-gray-800 focus:outline-none focus:border-purple-500 dark:focus:border-purple-600"
             />
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+        <div className="border-t border-gray-800 dark:border-gray-900 mt-8 pt-8 text-center text-gray-400 dark:text-gray-500">
           <p>&copy; 2024 VirtualCards. All rights reserved.</p>
         </div>
       </div>
