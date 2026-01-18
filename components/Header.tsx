@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useTheme } from "./ThemeProvider";
+import { useCart } from "./CartProvider";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const { cartCount } = useCart();
 
   return (
     <header className="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50 transition-colors">
@@ -29,7 +31,7 @@ export default function Header() {
               How It Works
             </Link>
             <Link href="/cart" className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
-              Cart (0)
+              Cart ({cartCount})
             </Link>
             
             {/* Theme Toggle Button */}
@@ -102,7 +104,7 @@ export default function Header() {
               className="block py-2 text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Cart (0)
+              Cart ({cartCount})
             </Link>
             
             {/* Theme Toggle for Mobile */}
