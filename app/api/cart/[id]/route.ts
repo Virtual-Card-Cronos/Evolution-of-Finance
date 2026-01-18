@@ -6,9 +6,10 @@ import { eq } from "drizzle-orm";
 // PATCH - Update cart item quantity
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
     const id = parseInt(params.id);
     const body = await request.json();
     const { quantity } = body;
@@ -46,9 +47,10 @@ export async function PATCH(
 // DELETE - Remove specific item from cart
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
     const id = parseInt(params.id);
 
     const deleted = await db
