@@ -4,82 +4,7 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-
-// Sample gift card data (in a real app, this would come from an API or database)
-const giftCards = [
-  {
-    id: 1,
-    name: "Amazon",
-    category: "Shopping",
-    image: "🛒",
-    minValue: 10,
-    maxValue: 500,
-    description: "Shop for millions of products on Amazon with this digital gift card. Perfect for any occasion!",
-  },
-  {
-    id: 2,
-    name: "Netflix",
-    category: "Entertainment",
-    image: "🎬",
-    minValue: 15,
-    maxValue: 100,
-    description: "Stream unlimited movies and TV shows with a Netflix gift card. Entertainment at your fingertips!",
-  },
-  {
-    id: 3,
-    name: "Spotify",
-    category: "Music",
-    image: "🎵",
-    minValue: 10,
-    maxValue: 100,
-    description: "Enjoy millions of songs and podcasts with Spotify Premium. Music for every mood!",
-  },
-  {
-    id: 4,
-    name: "Starbucks",
-    category: "Food & Dining",
-    image: "☕",
-    minValue: 5,
-    maxValue: 200,
-    description: "Get your favorite coffee and treats at Starbucks. The perfect gift for coffee lovers!",
-  },
-  {
-    id: 5,
-    name: "Steam",
-    category: "Gaming",
-    image: "🎮",
-    minValue: 10,
-    maxValue: 100,
-    description: "Buy games, software, and more on Steam. The ultimate gaming platform!",
-  },
-  {
-    id: 6,
-    name: "iTunes",
-    category: "Entertainment",
-    image: "🎧",
-    minValue: 10,
-    maxValue: 200,
-    description: "Purchase music, movies, apps, and more from the iTunes Store.",
-  },
-  {
-    id: 7,
-    name: "Google Play",
-    category: "Apps & Games",
-    image: "📱",
-    minValue: 10,
-    maxValue: 200,
-    description: "Get apps, games, movies, and more from Google Play Store.",
-  },
-  {
-    id: 8,
-    name: "Uber",
-    category: "Transportation",
-    image: "🚗",
-    minValue: 15,
-    maxValue: 200,
-    description: "Ride with Uber or get food delivered with Uber Eats.",
-  },
-];
+import { giftCardsData } from "@/lib/giftCardData";
 
 const amounts = [10, 25, 50, 100, 200];
 
@@ -87,7 +12,7 @@ export default function CardDetailPage() {
   const params = useParams();
   const router = useRouter();
   const cardId = parseInt(params.id as string);
-  const card = giftCards.find((c) => c.id === cardId);
+  const card = giftCardsData.find((c) => c.id === cardId);
 
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState("");

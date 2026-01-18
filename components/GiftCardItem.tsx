@@ -1,14 +1,5 @@
 import Link from "next/link";
-
-interface GiftCard {
-  id: number;
-  name: string;
-  category: string;
-  image: string;
-  minValue: number;
-  maxValue: number;
-  featured: boolean;
-}
+import { GiftCard } from "@/lib/giftCardData";
 
 interface GiftCardItemProps {
   card: GiftCard;

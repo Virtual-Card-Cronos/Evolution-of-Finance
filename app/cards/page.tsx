@@ -4,135 +4,13 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import GiftCardItem from "@/components/GiftCardItem";
-
-// Extended gift card data
-const allGiftCards = [
-  {
-    id: 1,
-    name: "Amazon",
-    category: "Shopping",
-    image: "🛒",
-    minValue: 10,
-    maxValue: 500,
-    featured: true,
-  },
-  {
-    id: 2,
-    name: "Netflix",
-    category: "Entertainment",
-    image: "🎬",
-    minValue: 15,
-    maxValue: 100,
-    featured: true,
-  },
-  {
-    id: 3,
-    name: "Spotify",
-    category: "Music",
-    image: "🎵",
-    minValue: 10,
-    maxValue: 100,
-    featured: true,
-  },
-  {
-    id: 4,
-    name: "Starbucks",
-    category: "Food & Dining",
-    image: "☕",
-    minValue: 5,
-    maxValue: 200,
-    featured: true,
-  },
-  {
-    id: 5,
-    name: "Steam",
-    category: "Gaming",
-    image: "🎮",
-    minValue: 10,
-    maxValue: 100,
-    featured: true,
-  },
-  {
-    id: 6,
-    name: "iTunes",
-    category: "Entertainment",
-    image: "🎧",
-    minValue: 10,
-    maxValue: 200,
-    featured: true,
-  },
-  {
-    id: 7,
-    name: "Google Play",
-    category: "Apps & Games",
-    image: "📱",
-    minValue: 10,
-    maxValue: 200,
-    featured: true,
-  },
-  {
-    id: 8,
-    name: "Uber",
-    category: "Transportation",
-    image: "🚗",
-    minValue: 15,
-    maxValue: 200,
-    featured: true,
-  },
-  {
-    id: 9,
-    name: "Target",
-    category: "Shopping",
-    image: "🎯",
-    minValue: 10,
-    maxValue: 500,
-    featured: false,
-  },
-  {
-    id: 10,
-    name: "Walmart",
-    category: "Shopping",
-    image: "🏪",
-    minValue: 10,
-    maxValue: 500,
-    featured: false,
-  },
-  {
-    id: 11,
-    name: "PlayStation",
-    category: "Gaming",
-    image: "🕹️",
-    minValue: 10,
-    maxValue: 100,
-    featured: false,
-  },
-  {
-    id: 12,
-    name: "Xbox",
-    category: "Gaming",
-    image: "🎯",
-    minValue: 10,
-    maxValue: 100,
-    featured: false,
-  },
-];
-
-const categories = [
-  "All",
-  "Shopping",
-  "Entertainment",
-  "Gaming",
-  "Food & Dining",
-  "Music",
-  "Apps & Games",
-  "Transportation",
-];
+import { giftCardsData, categories } from "@/lib/giftCardData";
 
 export default function CardsPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredCards = allGiftCards.filter((card) => {
+  const filteredCards = giftCardsData.filter((card) => {
     const matchesCategory =
       selectedCategory === "All" || card.category === selectedCategory;
     const matchesSearch = card.name

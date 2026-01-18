@@ -3,9 +3,15 @@
 import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { GiftCard } from "@/lib/giftCardData";
+
+interface CartItem extends GiftCard {
+  quantity: number;
+  selectedAmount: number;
+}
 
 export default function CartPage() {
-  const [cartItems] = useState<any[]>([]);
+  const [cartItems] = useState<CartItem[]>([]);
 
   return (
     <div className="min-h-screen flex flex-col">
