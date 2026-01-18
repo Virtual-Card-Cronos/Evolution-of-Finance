@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { getInitialThemeScript } from "@/lib/theme";
 
 export const metadata: Metadata = {
   title: "Virtual Gift Cards - Buy Digital Gift Cards Online",
@@ -15,19 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                const theme = localStorage.getItem('theme') || 
-                  (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-                if (theme === 'dark') {
-                  document.documentElement.classList.add('dark');
-                }
-              } catch (e) {}
-            `,
-          }}
-        />
+        <script dangerouslySetInnerHTML={{ __html: getInitialThemeScript() }} />
       </head>
       <body className="antialiased">
         <ThemeProvider>

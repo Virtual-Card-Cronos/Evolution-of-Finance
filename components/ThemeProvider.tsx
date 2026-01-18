@@ -1,8 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-
-type Theme = "light" | "dark";
+import { getInitialTheme, type Theme } from "@/lib/theme";
 
 interface ThemeContextType {
   theme: Theme;
@@ -18,13 +17,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Set mounted to true after component mounts
   useEffect(() => {
     setMounted(true);
-    // Load theme from localStorage or use system preference
-    const savedTheme = localStorage.getItem("theme") as Theme | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      setTheme("dark");
-    }
+    setTheme(getInitialTheme());
   }, []);
 
   // Apply theme class to document element
