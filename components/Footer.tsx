@@ -72,7 +72,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 dark:border-gray-900 mt-8 pt-8 text-center text-gray-400 dark:text-gray-500">
-          <p>&copy; 2024 VirtualCards. All rights reserved.</p>
+          <p>&copy; 2026 VirtualCards. All rights reserved.</p>
         </div>
       </div>
     </footer>
