@@ -10,6 +10,15 @@ export async function PATCH(
 ) {
   try {
     const params = await context.params;
+    
+    // Validate params
+    if (!params.id || isNaN(parseInt(params.id))) {
+      return NextResponse.json(
+        { error: "Invalid item ID", success: false },
+        { status: 400 }
+      );
+    }
+    
     const id = parseInt(params.id);
     const body = await request.json();
     const { quantity } = body;
@@ -51,6 +60,15 @@ export async function DELETE(
 ) {
   try {
     const params = await context.params;
+    
+    // Validate params
+    if (!params.id || isNaN(parseInt(params.id))) {
+      return NextResponse.json(
+        { error: "Invalid item ID", success: false },
+        { status: 400 }
+      );
+    }
+    
     const id = parseInt(params.id);
 
     const deleted = await db

@@ -2,6 +2,11 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 
+interface CartItem {
+  id: number;
+  quantity: number;
+}
+
 interface CartContextType {
   cartCount: number;
   refreshCartCount: () => Promise<void>;
@@ -21,7 +26,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const data = await response.json();
       if (data.success) {
         const totalItems = data.items.reduce(
-          (sum: number, item: any) => sum + item.quantity,
+          (sum: number, item: CartItem) => sum + item.quantity,
           0
         );
         setCartCount(totalItems);
