@@ -20,8 +20,10 @@ export function getInitialTheme(): Theme {
 export function getInitialThemeScript(): string {
   return `
     try {
-      const theme = localStorage.getItem('theme') || 
-        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      const savedTheme = localStorage.getItem('theme');
+      const theme = (savedTheme === 'light' || savedTheme === 'dark') 
+        ? savedTheme 
+        : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       if (theme === 'dark') {
         document.documentElement.classList.add('dark');
       }
