@@ -6,10 +6,12 @@ A Next.js-based digital gift card marketplace inspired by CakePay, allowing user
 
 - 🎁 Browse and search gift cards from popular brands
 - ⚡ Instant digital delivery
-- 🛒 Shopping cart functionality
+- 🛒 Shopping cart functionality with database persistence
 - 💳 Multiple payment options (placeholder)
 - 📱 Fully responsive design
 - 🎨 Modern UI with Tailwind CSS
+- 🌙 Dark mode support
+- 💾 Persistent cart storage using Neon database
 
 ## Tech Stack
 
@@ -17,6 +19,8 @@ A Next.js-based digital gift card marketplace inspired by CakePay, allowing user
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **UI**: React components with client/server composition
+- **Database**: Neon (Serverless Postgres)
+- **ORM**: Drizzle ORM
 
 ## Getting Started
 
@@ -38,12 +42,26 @@ cd Evolution-of-Finance-Frontend
 npm install
 ```
 
-3. Run the development server
+3. Set up environment variables
+```bash
+cp .env.example .env.local
+```
+Edit `.env.local` and add your Neon database URL:
+```
+DATABASE_URL=postgresql://user:password@host.neon.tech/dbname?sslmode=require
+```
+
+4. Push the database schema to your Neon database
+```bash
+npm run db:push
+```
+
+5. Run the development server
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+6. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ## Available Scripts
 
@@ -51,6 +69,10 @@ npm run dev
 - `npm run build` - Build for production
 - `npm start` - Start production server
 - `npm run lint` - Run ESLint
+- `npm run db:generate` - Generate database migrations
+- `npm run db:migrate` - Run database migrations
+- `npm run db:push` - Push schema changes to database
+- `npm run db:studio` - Open Drizzle Studio (database GUI)
 
 ## Project Structure
 
@@ -84,7 +106,14 @@ npm run dev
 - Full card information
 - Amount selection (preset and custom)
 - Quantity selector
-- Add to cart functionality
+- Add to cart functionality (persisted to database)
+
+### Shopping Cart
+- View all cart items
+- Update quantities
+- Remove items
+- Automatic total calculation
+- Persistent storage across sessions
 
 ### How It Works
 - Step-by-step guide
