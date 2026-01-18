@@ -1,4 +1,3 @@
-import Link from "next/link";
 import GiftCardItem from "./GiftCardItem";
 import { giftCardsData } from "@/lib/giftCardData";
 
