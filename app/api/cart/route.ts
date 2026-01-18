@@ -31,23 +31,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if item already exists in cart
+    // Check if item with same card and amount already exists in cart
     const existingItem = await db
       .select()
       .from(cartItems)
       .where(eq(cartItems.cardId, cardId))
-      .limit(1);
+      .limit(10); // Get all items with this cardId
 
-    if (existingItem.length > 0) {
+    // Find exact match (same card and same amount)
+    const exactMatch = existingItem.find(
+      (item) => parseFloat(item.selectedAmount) === selectedAmount
+    );
+
+    if (exactMatch) {
       // Update existing item quantity
       const updated = await db
         .update(cartItems)
         .set({
-          quantity: existingItem[0].quantity + quantity,
-          selectedAmount: selectedAmount.toString(),
+          quantity: exactMatch.quantity + quantity,
           updatedAt: new Date(),
         })
-        .where(eq(cartItems.id, existingItem[0].id))
+        .where(eq(cartItems.id, exactMatch.id))
         .returning();
 
       return NextResponse.json({ item: updated[0], success: true });
