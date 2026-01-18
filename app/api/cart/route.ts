@@ -14,8 +14,13 @@ import {
 export async function GET() {
   try {
     if (isDatabaseConfigured && db) {
-      const items = await db.select().from(cartItems);
-      return NextResponse.json({ items, success: true });
+      try {
+        const items = await db.select().from(cartItems);
+        return NextResponse.json({ items, success: true });
+      } catch (dbError) {
+        console.warn("Database error, falling back to in-memory storage:", dbError);
+        // Fall through to in-memory storage
+      }
     }
 
     // Fallback to in-memory storage
@@ -44,43 +49,48 @@ export async function POST(request: NextRequest) {
     }
 
     if (isDatabaseConfigured && db) {
-      // Database mode
-      const existingItem = await db
-        .select()
-        .from(cartItems)
-        .where(eq(cartItems.cardId, cardId))
-        .limit(10);
+      try {
+        // Database mode
+        const existingItem = await db
+          .select()
+          .from(cartItems)
+          .where(eq(cartItems.cardId, cardId))
+          .limit(10);
 
-      const exactMatch = existingItem.find(
-        (item) => parseFloat(item.selectedAmount) === selectedAmount
-      );
+        const exactMatch = existingItem.find(
+          (item) => parseFloat(item.selectedAmount) === selectedAmount
+        );
 
-      if (exactMatch) {
-        const updated = await db
-          .update(cartItems)
-          .set({
-            quantity: exactMatch.quantity + quantity,
-            updatedAt: new Date(),
+        if (exactMatch) {
+          const updated = await db
+            .update(cartItems)
+            .set({
+              quantity: exactMatch.quantity + quantity,
+              updatedAt: new Date(),
+            })
+            .where(eq(cartItems.id, exactMatch.id))
+            .returning();
+
+          return NextResponse.json({ item: updated[0], success: true });
+        }
+
+        const newItem = await db
+          .insert(cartItems)
+          .values({
+            cardId,
+            cardName,
+            category,
+            image,
+            selectedAmount: selectedAmount.toString(),
+            quantity,
           })
-          .where(eq(cartItems.id, exactMatch.id))
           .returning();
 
-        return NextResponse.json({ item: updated[0], success: true });
+        return NextResponse.json({ item: newItem[0], success: true }, { status: 201 });
+      } catch (dbError) {
+        console.warn("Database error, falling back to in-memory storage:", dbError);
+        // Fall through to in-memory storage
       }
-
-      const newItem = await db
-        .insert(cartItems)
-        .values({
-          cardId,
-          cardName,
-          category,
-          image,
-          selectedAmount: selectedAmount.toString(),
-          quantity,
-        })
-        .returning();
-
-      return NextResponse.json({ item: newItem[0], success: true }, { status: 201 });
     }
 
     // Fallback to in-memory storage
@@ -118,8 +128,13 @@ export async function POST(request: NextRequest) {
 export async function DELETE() {
   try {
     if (isDatabaseConfigured && db) {
-      await db.delete(cartItems);
-      return NextResponse.json({ success: true });
+      try {
+        await db.delete(cartItems);
+        return NextResponse.json({ success: true });
+      } catch (dbError) {
+        console.warn("Database error, falling back to in-memory storage:", dbError);
+        // Fall through to in-memory storage
+      }
     }
 
     // Fallback to in-memory storage
