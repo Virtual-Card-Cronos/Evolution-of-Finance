@@ -1,13 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db, isDatabaseConfigured } from "@/lib/db";
 import { cartItems } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import {
+  getInMemoryCart,
+  addToInMemoryCart,
+  findInMemoryCartItem,
+  updateInMemoryCartItem,
+  clearInMemoryCart,
+} from "@/lib/cart-storage";
 
 // GET - Fetch all cart items
 export async function GET() {
   try {
-    const items = await db.select().from(cartItems);
-    return NextResponse.json({ items, success: true });
+    if (isDatabaseConfigured && db) {
+      const items = await db.select().from(cartItems);
+      return NextResponse.json({ items, success: true });
+    }
+
+    // Fallback to in-memory storage
+    return NextResponse.json({ items: getInMemoryCart(), success: true });
   } catch (error) {
     console.error("Error fetching cart items:", error);
     return NextResponse.json(
@@ -31,46 +43,68 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if item with same card and amount already exists in cart
-    const existingItem = await db
-      .select()
-      .from(cartItems)
-      .where(eq(cartItems.cardId, cardId))
-      .limit(10); // Get all items with this cardId
+    if (isDatabaseConfigured && db) {
+      // Database mode
+      const existingItem = await db
+        .select()
+        .from(cartItems)
+        .where(eq(cartItems.cardId, cardId))
+        .limit(10);
 
-    // Find exact match (same card and same amount)
-    const exactMatch = existingItem.find(
-      (item) => parseFloat(item.selectedAmount) === selectedAmount
-    );
+      const exactMatch = existingItem.find(
+        (item) => parseFloat(item.selectedAmount) === selectedAmount
+      );
 
-    if (exactMatch) {
-      // Update existing item quantity
-      const updated = await db
-        .update(cartItems)
-        .set({
-          quantity: exactMatch.quantity + quantity,
-          updatedAt: new Date(),
+      if (exactMatch) {
+        const updated = await db
+          .update(cartItems)
+          .set({
+            quantity: exactMatch.quantity + quantity,
+            updatedAt: new Date(),
+          })
+          .where(eq(cartItems.id, exactMatch.id))
+          .returning();
+
+        return NextResponse.json({ item: updated[0], success: true });
+      }
+
+      const newItem = await db
+        .insert(cartItems)
+        .values({
+          cardId,
+          cardName,
+          category,
+          image,
+          selectedAmount: selectedAmount.toString(),
+          quantity,
         })
-        .where(eq(cartItems.id, exactMatch.id))
         .returning();
 
-      return NextResponse.json({ item: updated[0], success: true });
+      return NextResponse.json({ item: newItem[0], success: true }, { status: 201 });
     }
 
-    // Insert new item
-    const newItem = await db
-      .insert(cartItems)
-      .values({
-        cardId,
-        cardName,
-        category,
-        image,
-        selectedAmount: selectedAmount.toString(),
-        quantity,
-      })
-      .returning();
+    // Fallback to in-memory storage
+    const existingItem = findInMemoryCartItem(
+      (item) => item.cardId === cardId && parseFloat(item.selectedAmount) === selectedAmount
+    );
 
-    return NextResponse.json({ item: newItem[0], success: true }, { status: 201 });
+    if (existingItem) {
+      const updated = updateInMemoryCartItem(existingItem.id, {
+        quantity: existingItem.quantity + quantity,
+      });
+      return NextResponse.json({ item: updated, success: true });
+    }
+
+    const newItem = addToInMemoryCart({
+      cardId,
+      cardName,
+      category,
+      image,
+      selectedAmount: selectedAmount.toString(),
+      quantity,
+    });
+
+    return NextResponse.json({ item: newItem, success: true }, { status: 201 });
   } catch (error) {
     console.error("Error adding item to cart:", error);
     return NextResponse.json(
@@ -83,7 +117,13 @@ export async function POST(request: NextRequest) {
 // DELETE - Remove all items from cart
 export async function DELETE() {
   try {
-    await db.delete(cartItems);
+    if (isDatabaseConfigured && db) {
+      await db.delete(cartItems);
+      return NextResponse.json({ success: true });
+    }
+
+    // Fallback to in-memory storage
+    clearInMemoryCart();
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error clearing cart:", error);
