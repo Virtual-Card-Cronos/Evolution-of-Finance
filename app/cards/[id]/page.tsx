@@ -5,12 +5,14 @@ import { useParams, useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { giftCardsData } from "@/lib/giftCardData";
+import { useCart } from "@/components/CartProvider";
 
 const amounts = [10, 25, 50, 100, 200];
 
 export default function CardDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { refreshCartCount } = useCart();
   const cardId = parseInt(params.id as string);
   const card = giftCardsData.find((c) => c.id === cardId);
 
@@ -38,7 +40,7 @@ export default function CardDetailPage() {
     );
   }
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     const amount = selectedAmount || parseFloat(customAmount);
     if (!amount || amount < card.minValue || amount > card.maxValue) {
       alert(
@@ -46,8 +48,37 @@ export default function CardDetailPage() {
       );
       return;
     }
-    alert(`Added ${quantity} x $${amount} ${card.name} gift card(s) to cart!`);
-    // In a real app, this would add to cart state/context
+
+    try {
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cardId: card.id,
+          cardName: card.name,
+          category: card.category,
+          image: card.image,
+          selectedAmount: amount,
+          quantity: quantity,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        await refreshCartCount();
+        alert(`Added ${quantity} x $${amount} ${card.name} gift card(s) to cart!`);
+        // Optionally redirect to cart or update UI
+        router.push("/cart");
+      } else {
+        alert("Failed to add item to cart. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("An error occurred. Please try again.");
+    }
   };
 
   return (
