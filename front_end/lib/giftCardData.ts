@@ -1,14 +1,54 @@
+/**
+ * Gift Card Data Module
+ * 
+ * Contains the gift card catalog data and related types.
+ * This module serves as the data source for all gift cards
+ * displayed throughout the application.
+ * 
+ * In a production environment, this data would typically
+ * be fetched from a database or external API.
+ * 
+ * @module lib/giftCardData
+ */
+
+/**
+ * Gift Card interface
+ * 
+ * Defines the structure of a gift card item in the catalog.
+ * Used for type safety across the application.
+ */
 export interface GiftCard {
+  /** Unique identifier for the gift card */
   id: number;
+  /** Display name of the gift card brand */
   name: string;
+  /** Category for filtering (e.g., "Shopping", "Entertainment") */
   category: string;
+  /** Emoji or image URL representing the card */
   image: string;
+  /** Minimum purchasable amount in USD */
   minValue: number;
+  /** Maximum purchasable amount in USD */
   maxValue: number;
+  /** Whether to feature this card on the homepage */
   featured: boolean;
+  /** Optional detailed description of the gift card */
   description?: string;
 }
 
+/**
+ * Gift Cards Catalog
+ * 
+ * Array containing all available gift cards in the system.
+ * Cards are ordered by popularity/featured status.
+ * 
+ * Each card includes:
+ * - Brand information
+ * - Category classification
+ * - Value range (min/max)
+ * - Featured flag for homepage display
+ * - Optional description
+ */
 export const giftCardsData: GiftCard[] = [
   {
     id: 1,
@@ -132,6 +172,12 @@ export const giftCardsData: GiftCard[] = [
   },
 ];
 
+/**
+ * Available Categories
+ * 
+ * List of all gift card categories for filtering.
+ * "All" is a special filter that shows all cards.
+ */
 export const categories = [
   "All",
   "Shopping",

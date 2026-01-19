@@ -1,68 +1,55 @@
+/**
+ * Home Page Component
+ * 
+ * This is the main landing page for the VirtualCards gift card platform.
+ * It showcases the hero section, key features, and popular gift cards.
+ * 
+ * Features:
+ * - Animated hero section with call-to-action
+ * - Feature highlights with icons
+ * - Popular gift cards grid
+ * - Responsive design with dark mode support
+ * 
+ * @module app/page
+ */
+
 import Link from "next/link";
 import GiftCardGrid from "@/components/GiftCardGrid";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import HeroSection from "@/components/HeroSection";
+import FeaturesSection from "@/components/FeaturesSection";
 
+/**
+ * Home page server component
+ * Renders the main landing page with hero, features, and gift card sections
+ * 
+ * @returns JSX element representing the home page
+ */
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950 transition-colors">
+      {/* Global navigation header */}
       <Header />
       
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-800 dark:to-blue-800 text-white py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Buy Virtual Gift Cards Instantly
-            </h1>
-            <p className="text-xl md:text-2xl mb-8 text-purple-100 dark:text-purple-200">
-              Choose from hundreds of brands. Delivered digitally in seconds.
-            </p>
-            <Link 
-              href="/cards"
-              className="inline-block bg-white text-purple-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 dark:hover:bg-gray-200 transition-colors"
-            >
-              Browse Gift Cards
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* Hero Section - Main banner with animated entrance */}
+      <HeroSection />
 
-      {/* Features Section */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900 transition-colors">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-gray-100">Why Choose Us?</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md text-center transition-colors">
-              <div className="text-4xl mb-4">⚡</div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">Instant Delivery</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Receive your gift card code immediately after purchase
-              </p>
-            </div>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md text-center transition-colors">
-              <div className="text-4xl mb-4">🔒</div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">Secure Payment</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Your transactions are protected with bank-level security
-              </p>
-            </div>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md text-center transition-colors">
-              <div className="text-4xl mb-4">🎁</div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">Wide Selection</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Hundreds of brands across multiple categories
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Features Section - Key value propositions with animated cards */}
+      <FeaturesSection />
 
-      {/* Popular Gift Cards Section */}
+      {/* Popular Gift Cards Section - Showcases top gift card options */}
       <section className="py-16 bg-white dark:bg-gray-950 transition-colors">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-gray-100">Popular Gift Cards</h2>
+          {/* Section heading */}
+          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-gray-100">
+            Popular Gift Cards
+          </h2>
+          
+          {/* Gift card grid with staggered animations */}
           <GiftCardGrid />
+          
+          {/* View all CTA button */}
           <div className="text-center mt-8">
             <Link 
               href="/cards"
@@ -74,6 +61,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Global footer with links and newsletter */}
       <Footer />
     </div>
   );

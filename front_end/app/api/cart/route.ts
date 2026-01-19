@@ -1,3 +1,17 @@
+/**
+ * Cart API Route Handler
+ * 
+ * Handles cart operations including:
+ * - GET: Fetch all cart items
+ * - POST: Add item to cart
+ * - DELETE: Clear entire cart
+ * 
+ * Supports both database and in-memory storage modes.
+ * Falls back to in-memory when DATABASE_URL is not configured.
+ * 
+ * @module app/api/cart/route
+ */
+
 import { NextRequest, NextResponse } from "next/server";
 import { db, isDatabaseConfigured } from "@/lib/db";
 import { cartItems } from "@/lib/db/schema";
@@ -10,15 +24,23 @@ import {
   clearInMemoryCart,
 } from "@/lib/cart-storage";
 
-// GET - Fetch all cart items
+/**
+ * GET /api/cart
+ * 
+ * Fetches all items currently in the shopping cart.
+ * Returns array of cart items with success status.
+ * 
+ * @returns JSON response with cart items array
+ */
 export async function GET() {
   try {
+    // Use database if configured
     if (isDatabaseConfigured && db) {
       const items = await db.select().from(cartItems);
       return NextResponse.json({ items, success: true });
     }
 
-    // Fallback to in-memory storage
+    // Fallback to in-memory storage for demo mode
     return NextResponse.json({ items: getInMemoryCart(), success: true });
   } catch (error) {
     console.error("Error fetching cart items:", error);
@@ -29,13 +51,30 @@ export async function GET() {
   }
 }
 
-// POST - Add item to cart
+/**
+ * POST /api/cart
+ * 
+ * Adds a new item to the cart or updates quantity if exists.
+ * If the same card with same amount exists, increments quantity.
+ * Otherwise, creates a new cart item entry.
+ * 
+ * Request body:
+ * - cardId: number - Gift card ID from catalog
+ * - cardName: string - Display name of the card
+ * - category: string - Card category
+ * - image: string - Card image/emoji
+ * - selectedAmount: number - Dollar amount for the card
+ * - quantity: number - Number of cards to add
+ * 
+ * @param request - NextRequest with JSON body
+ * @returns JSON response with created/updated item
+ */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { cardId, cardName, category, image, selectedAmount, quantity } = body;
 
-    // Validate required fields
+    // Validate all required fields are present
     if (!cardId || !cardName || !category || !image || !selectedAmount || !quantity) {
       return NextResponse.json(
         { error: "Missing required fields", success: false },
@@ -43,18 +82,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Database mode
     if (isDatabaseConfigured && db) {
-      // Database mode
+      // Check if item with same cardId already exists
       const existingItem = await db
         .select()
         .from(cartItems)
         .where(eq(cartItems.cardId, cardId))
         .limit(10);
 
+      // Find exact match (same card AND same amount)
       const exactMatch = existingItem.find(
         (item) => parseFloat(item.selectedAmount) === selectedAmount
       );
 
+      // Update quantity if exact match found
       if (exactMatch) {
         const updated = await db
           .update(cartItems)
@@ -68,6 +110,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ item: updated[0], success: true });
       }
 
+      // Create new cart item if no exact match
       const newItem = await db
         .insert(cartItems)
         .values({
@@ -88,6 +131,7 @@ export async function POST(request: NextRequest) {
       (item) => item.cardId === cardId && parseFloat(item.selectedAmount) === selectedAmount
     );
 
+    // Update existing item quantity
     if (existingItem) {
       const updated = updateInMemoryCartItem(existingItem.id, {
         quantity: existingItem.quantity + quantity,
@@ -95,6 +139,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ item: updated, success: true });
     }
 
+    // Create new in-memory cart item
     const newItem = addToInMemoryCart({
       cardId,
       cardName,
@@ -114,15 +159,23 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// DELETE - Remove all items from cart
+/**
+ * DELETE /api/cart
+ * 
+ * Removes all items from the cart.
+ * Used for clearing cart after checkout or user request.
+ * 
+ * @returns JSON response with success status
+ */
 export async function DELETE() {
   try {
+    // Database mode - delete all cart items
     if (isDatabaseConfigured && db) {
       await db.delete(cartItems);
       return NextResponse.json({ success: true });
     }
 
-    // Fallback to in-memory storage
+    // Fallback - clear in-memory storage
     clearInMemoryCart();
     return NextResponse.json({ success: true });
   } catch (error) {
