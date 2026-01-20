@@ -1,3 +1,15 @@
+/**
+ * Cart Item API Route Handler
+ * 
+ * Handles individual cart item operations by ID:
+ * - PATCH: Update item quantity
+ * - DELETE: Remove specific item from cart
+ * 
+ * Supports both database and in-memory storage modes.
+ * 
+ * @module app/api/cart/[id]/route
+ */
+
 import { NextRequest, NextResponse } from "next/server";
 import { db, isDatabaseConfigured } from "@/lib/db";
 import { cartItems } from "@/lib/db/schema";
@@ -7,15 +19,30 @@ import {
   removeFromInMemoryCart,
 } from "@/lib/cart-storage";
 
-// PATCH - Update cart item quantity
+/**
+ * PATCH /api/cart/[id]
+ * 
+ * Updates the quantity of a specific cart item.
+ * 
+ * URL params:
+ * - id: Cart item ID to update
+ * 
+ * Request body:
+ * - quantity: number - New quantity (must be >= 1)
+ * 
+ * @param request - NextRequest with JSON body
+ * @param context - Route context with params promise
+ * @returns JSON response with updated item or error
+ */
 export async function PATCH(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Await dynamic route params (Next.js 15+ pattern)
     const params = await context.params;
     
-    // Validate params
+    // Validate params - ensure ID is a valid number
     if (!params.id || isNaN(parseInt(params.id))) {
       return NextResponse.json(
         { error: "Invalid item ID", success: false },
@@ -27,6 +54,7 @@ export async function PATCH(
     const body = await request.json();
     const { quantity } = body;
 
+    // Validate quantity - must be positive integer
     if (!quantity || quantity < 1) {
       return NextResponse.json(
         { error: "Invalid quantity", success: false },
@@ -34,13 +62,16 @@ export async function PATCH(
       );
     }
 
+    // Database mode
     if (isDatabaseConfigured && db) {
+      // Update item and return updated record
       const updated = await db
         .update(cartItems)
         .set({ quantity, updatedAt: new Date() })
         .where(eq(cartItems.id, id))
         .returning();
 
+      // Check if item was found and updated
       if (updated.length === 0) {
         return NextResponse.json(
           { error: "Item not found", success: false },
@@ -53,6 +84,7 @@ export async function PATCH(
 
     // Fallback to in-memory storage
     const item = updateInMemoryCartItem(id, { quantity });
+    
     if (!item) {
       return NextResponse.json(
         { error: "Item not found", success: false },
@@ -70,15 +102,27 @@ export async function PATCH(
   }
 }
 
-// DELETE - Remove specific item from cart
+/**
+ * DELETE /api/cart/[id]
+ * 
+ * Removes a specific item from the cart.
+ * 
+ * URL params:
+ * - id: Cart item ID to remove
+ * 
+ * @param request - NextRequest (unused but required)
+ * @param context - Route context with params promise
+ * @returns JSON response with success status or error
+ */
 export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Await dynamic route params
     const params = await context.params;
     
-    // Validate params
+    // Validate params - ensure ID is a valid number
     if (!params.id || isNaN(parseInt(params.id))) {
       return NextResponse.json(
         { error: "Invalid item ID", success: false },
@@ -88,12 +132,15 @@ export async function DELETE(
     
     const id = parseInt(params.id);
 
+    // Database mode
     if (isDatabaseConfigured && db) {
+      // Delete item and return deleted record
       const deleted = await db
         .delete(cartItems)
         .where(eq(cartItems.id, id))
         .returning();
 
+      // Check if item was found and deleted
       if (deleted.length === 0) {
         return NextResponse.json(
           { error: "Item not found", success: false },
@@ -106,6 +153,7 @@ export async function DELETE(
 
     // Fallback to in-memory storage
     const removed = removeFromInMemoryCart(id);
+    
     if (!removed) {
       return NextResponse.json(
         { error: "Item not found", success: false },
